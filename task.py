@@ -4,32 +4,32 @@ from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 from datetime import datetime
 
-# Google Sheets setup
+
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("apikey.json", scope)
 client = gspread.authorize(creds)
 sheet = client.open("taskmanager").sheet1
 
-# Function to add a new task
+
 def add_new_task(task_name):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     status = "Incomplete"
     sheet.append_row([task_name, status, timestamp])
 
-# Function to mark a task as done
+
 def update_task_status(row_number):
     sheet.update_cell(row_number, 2, "Completed")
     sheet.update_cell(row_number, 3, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-# Function to load tasks
+
 def load_tasks():
     tasks = sheet.get_all_records()
     return tasks
 
-# App Title
+
 st.title("Simple Task Tracker")
 
-# Add Task Section
+# create
 st.subheader("Create a Task")
 task_name = st.text_input("Task Name")
 if st.button("Add Task"):
@@ -39,14 +39,14 @@ if st.button("Add Task"):
     else:
         st.warning("Please enter a valid task name.")
 
-# Display Tasks Section
+
 st.subheader("Current Tasks")
 tasks = load_tasks()
 if tasks:
     task_df = pd.DataFrame(tasks)
     st.dataframe(task_df)
 
-    # Mark a Task as Completed
+    
     st.subheader("Complete a Task")
     task_choices = [f"{i+1}: {task['Task Name']}" for i, task in enumerate(tasks) if task["Status"] == "Incomplete"]
     if task_choices:
@@ -60,3 +60,4 @@ if tasks:
 else:
     st.info("No tasks available. Add a task to get started!")
 
+# https://github.com/hosnaebadzadeh
